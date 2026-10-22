@@ -1,0 +1,15 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Freddie Mac data (license: do not redistribute) and generated outputs
+data/
+sflld_extracted/
+outputs/
