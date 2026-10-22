@@ -25,7 +25,7 @@ independently defensible answer key. An AI validator (VALID-Agent) comes later �
 ## Done so far (verified)
 - Data checked: 50,000 loans (31 origination fields), 3,467,166 monthly records (35 fields),
   periods 2015-01..2026-03, IDs match, no duplicate loan-months.
-- Clean baseline: `src/baseline_logreg.py` (git commit 9c743e2). Do not modify it casually — it is the
+- Clean baseline: `src/baseline_logreg.py` (latest baseline commit 9253e97: leakage check fixed, results unchanged). Do not modify it casually — it is the
   reference. Run: `uv run python src/baseline_logreg.py --data data/raw/sample_2015.zip` (~3 min).
   Expected: train 101,843 rows / 462 events; test 15,716 rows / 119 events; test ROC-AUC 0.894.
 
