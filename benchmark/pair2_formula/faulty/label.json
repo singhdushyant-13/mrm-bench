@@ -1,0 +1,9 @@
+{
+  "case_id": "P2_F",
+  "pair_id": "P2",
+  "category": "formula",
+  "is_defect": true,
+  "violated_rule": "The logistic probability must be 1/(1+exp(-z)); the implementation uses 1/(1+exp(+z)), which equals 1 - sigma(z) and reverses the direction of risk.",
+  "evidence": "Synthetic tests: sigma(ln 3) returns 0.25 instead of 0.75; probabilities decrease as z increases; disagrees with scikit-learn predict_proba.",
+  "source": "Project model specification (src/baseline_logreg.py docstring); scikit-learn LogisticRegression documentation"
+}

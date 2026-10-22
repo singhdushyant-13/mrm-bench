@@ -1,0 +1,9 @@
+{
+  "case_id": "P2_V",
+  "pair_id": "P2",
+  "category": "formula",
+  "is_defect": false,
+  "violated_rule": null,
+  "evidence": "Synthetic tests: properties P1-P6 hold (sigma(ln 3) = 0.75, strictly increasing, range, centre, symmetry); agrees with scikit-learn predict_proba to within 1e-12; finite output at |z| = 1000.",
+  "source": "Project model specification (src/baseline_logreg.py docstring); scikit-learn LogisticRegression documentation"
+}

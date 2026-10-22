@@ -43,22 +43,28 @@ independently defensible answer key. An AI validator (VALID-Agent) comes later �
 - Documented sentinels -> NaN: FICO 9999; LTV/CLTV/DTI/MI 999; units/borrowers 99.
   DTI 999 = all HARP loans (4,017 of 4,020).
 
-## Benchmark plan (next work)
-Folder: `benchmark/`. One subfolder per case, e.g. `benchmark/pair1_preprocessing/`.
-Defect categories and pairs:
-1. Preprocessing — faulty: DTI 999 used as a real number; valid: 999 -> NaN + missing flag (same-looking code).
-2. Formula — faulty: wrong sign in sigmoid, p = 1/(1+exp(+z)); valid: algebraically equivalent p = exp(z)/(1+exp(z)).
-3. Horizon — faulty: 6-month window under a 12-month spec; valid: 6-month window under a separately documented 6-month spec.
-4. Leakage — faulty: feature uses records after t (e.g., max status over t+1..t+12 or final zero-balance code);
-   valid: max status over t-11..t.
-Each pair folder contains two case folders (faulty, valid) plus an independent checker and pytest file:
-- per case: `spec.md` (the rule + math justification), `impl.py` (no comments revealing the label),
-  `label.json` {"case_id", "pair_id", "category", "is_defect", "violated_rules", "evidence", "source"}.
-- per pair: `check_*.py` (independent checker written from the spec, returns violated rule IDs on fixed
-  synthetic data with exact expected values) and `test_pair*.py` (valid -> no violations; faulty -> the
-  exact expected violations; labels agree with checker; no real data in benchmark/).
-- The full suite must be green: "faulty is detected" is a passing test.
-Detailed task briefs live in `docs/claude_code_task_pair*.md`.
+## Benchmark status and plan
+Folder: `benchmark/`. One subfolder per pair. The detailed brief for each pair is in
+`docs/claude_code_task_pair<N>.md` and takes precedence over this summary.
+1. Preprocessing (DONE, commit 7fa098c): `pair1_preprocessing/`. Faulty uses DTI 999 as a number; valid
+   converts 999 to NaN, adds a missing flag, and imputes with the training median.
+2. Formula (BUILT, verified): `pair2_formula/`. Faulty p = 1/(1+exp(+z)); valid p = 0.5*(1+tanh(z/2)).
+   NOTE: exp(z)/(1+exp(z)) is NOT used as the valid twin, because it returns NaN at large z (second defect).
+3. Horizon (TODO): faulty uses a 6-month window under a 12-month spec; valid uses a 6-month window under a
+   separately documented 6-month spec.
+4. Leakage (TODO): faulty feature uses records after t (e.g., max status over t+1..t+12 or the final
+   zero-balance code); valid uses max status over t-11..t.
+
+Actual structure (follow it for new pairs). Each pair folder has `README.md` plus `faulty/` and `valid/`,
+each containing:
+- `spec.md`: the same correct specification in both (byte-identical), with math justification and provenance;
+- `impl.py`: same interface and identical validation; exactly one intended difference; no comments revealing the label;
+- `label.json`: {"case_id", "pair_id", "category", "is_defect", "violated_rule", "evidence", "source"};
+- `test_case.py`: exact assertions on synthetic data, IDENTICAL in both except the import line.
+`benchmark/run_pair<N>.py` runs each suite in its own process and compares outcomes with the labels. Only
+assertion failures count as defect evidence; import, collection, and runtime errors never do.
+`benchmark/test_no_real_data.py` scans all of benchmark/ for Freddie Mac loan IDs and large files.
+Running pytest over the whole repo exits non-zero BY DESIGN (the faulty suites fail). The runners are the verdict.
 Also keep false-alarm traps in mind (valid behaviour that looks suspicious): delinquency can jump
 from 00 to 03 in one month; loans can prepay while 90+; zero-balance date can be one month after period.
 
