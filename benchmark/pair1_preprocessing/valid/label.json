@@ -1,0 +1,9 @@
+{
+  "case_id": "P1_V",
+  "pair_id": "P1",
+  "category": "preprocessing",
+  "is_defect": false,
+  "violated_rule": null,
+  "evidence": "Synthetic tests demonstrate correct 999 handling and use of the training-only median.",
+  "source": "Freddie Mac SFLLD General User Guide, Release 47 (July 2026), Original DTI Ratio"
+}

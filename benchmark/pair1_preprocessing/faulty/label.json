@@ -1,0 +1,9 @@
+{
+  "case_id": "P1_F",
+  "pair_id": "P1",
+  "category": "preprocessing",
+  "is_defect": true,
+  "violated_rule": "Freddie Mac DTI 999 must be treated as missing, not numeric.",
+  "evidence": "Synthetic counterexample demonstrates that 999 contaminates the processed DTI values.",
+  "source": "Freddie Mac SFLLD General User Guide, Release 47 (July 2026), Original DTI Ratio"
+}
