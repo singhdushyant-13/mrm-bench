@@ -1,0 +1,9 @@
+{
+  "case_id": "P3_V",
+  "pair_id": "P3",
+  "category": "horizon",
+  "is_defect": false,
+  "violated_rule": null,
+  "evidence": "The 6-month implementation matches the documented 6-month specification: synthetic panels A and B reproduce every expected 6-month label (t+6 included, t+7 excluded; 2 events on panel A), with correct at-risk, censoring and validation behaviour.",
+  "source": "Freddie Mac SFLLD General User Guide, Release 47 (July 2026); project outcome specification (CLAUDE.md)"
+}

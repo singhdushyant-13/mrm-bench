@@ -1,0 +1,9 @@
+{
+  "case_id": "P3_F",
+  "pair_id": "P3",
+  "category": "horizon",
+  "is_defect": true,
+  "violated_rule": "Specification requires a 12-month outcome window (t+1..t+12); the implementation uses 6 months (t+1..t+6).",
+  "evidence": "Synthetic counterexamples at t = 0: S02 and S08 have their first 90+ month at months 7 and 12 (events under the spec, missed by the 6-month window); S04 (prepaid at month 8) and S06 (whole loan sale at month 10) must be censored but become non_event; E01 (data end at month 8) must be censored_end_of_data but becomes non_event. Panel A has 2 events instead of 4.",
+  "source": "Freddie Mac SFLLD General User Guide, Release 47 (July 2026); project outcome specification (CLAUDE.md)"
+}

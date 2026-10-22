@@ -50,14 +50,15 @@ Folder: `benchmark/`. One subfolder per pair. The detailed brief for each pair i
    converts 999 to NaN, adds a missing flag, and imputes with the training median.
 2. Formula (BUILT, verified): `pair2_formula/`. Faulty p = 1/(1+exp(+z)); valid p = 0.5*(1+tanh(z/2)).
    NOTE: exp(z)/(1+exp(z)) is NOT used as the valid twin, because it returns NaN at large z (second defect).
-3. Horizon (TODO): faulty uses a 6-month window under a 12-month spec; valid uses a 6-month window under a
-   separately documented 6-month spec.
+3. Horizon (BUILT, verified): `pair3_horizon/`. The impl.py files are BYTE-IDENTICAL (HORIZON_MONTHS = 6); the SPECS
+   differ (faulty spec = 12-month task, valid spec = 6-month early-warning task; also `spec.json`). The code
+   alone cannot decide this pair; it tests spec applicability.
 4. Leakage (TODO): faulty feature uses records after t (e.g., max status over t+1..t+12 or the final
    zero-balance code); valid uses max status over t-11..t.
 
 Actual structure (follow it for new pairs). Each pair folder has `README.md` plus `faulty/` and `valid/`,
 each containing:
-- `spec.md`: the same correct specification in both (byte-identical), with math justification and provenance;
+- `spec.md`: normally byte-identical in both cases (EXCEPTION: Pair 3, where only the spec differs), with math and provenance;
 - `impl.py`: same interface and identical validation; exactly one intended difference; no comments revealing the label;
 - `label.json`: {"case_id", "pair_id", "category", "is_defect", "violated_rule", "evidence", "source"};
 - `test_case.py`: exact assertions on synthetic data, IDENTICAL in both except the import line.
