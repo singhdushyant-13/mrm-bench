@@ -56,9 +56,11 @@ Folder: `benchmark/`. One subfolder per pair. The detailed brief for each pair i
 4. Leakage (BUILT, verified): `pair4_leakage/`. Faulty 12-month window has no upper bound (sees months > t);
    valid uses months t-11..t (month t is allowed: false-positive trap). Future-invariance tests (truncate or
    perturb months > t) are the general leakage check.
-KNOWN ISSUE: the leakage assertion in src/baseline_logreg.py (max_feature_period <= t) is tautological. It is
-computed from hist, which is already filtered to months <= t, so it can never fail. The baseline results are still
-correct (h12 is built from hist), but a real future-invariance test of build_snapshot() should be added.
+FIXED (baseline leakage check): the tautological assertion `max_feature_period <= t` (computed from hist, which is
+already filtered to months <= t, so it could never fail) was removed from build_snapshot(). The leakage check now lives
+in `tests/test_baseline_no_leakage.py`: future invariance (truncate or perturb all records after t) plus a mutation
+power check (a copy of build_snapshot() with a leaky 12-month window must be detected). Run: `uv run pytest tests`.
+Baseline results unchanged: console output and all files in outputs/ byte-identical to the committed run.
 
 Actual structure (follow it for new pairs). Each pair folder has `README.md` plus `faulty/` and `valid/`,
 each containing:

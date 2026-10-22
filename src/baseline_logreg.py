@@ -155,8 +155,7 @@ def build_snapshot(perf, T):
     feat["ever_modified"] = hh.modification_flag.notna().groupby(hh.loan_id).any().astype(int)
     feat["disaster_flag_t"] = feat.pop("delinq_due_to_disaster").eq("Y").astype(int)
     feat["assist_plan_t"] = feat.pop("borrower_assistance_plan").fillna("none")
-    feat["max_feature_period"] = ever.t.max()                  # used by the leakage assertion
-    assert (feat.max_feature_period <= t).all(), "LEAKAGE: feature uses a record after t"
+    # Leakage is tested by tests/test_baseline_no_leakage.py (future-invariance + mutation check).
 
     # ---- label (future window, never used as a feature)
     win = perf[(perf.t > t) & (perf.t <= t + HORIZON) & perf.loan_id.isin(ids)]
