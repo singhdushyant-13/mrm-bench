@@ -1,0 +1,9 @@
+{
+  "case_id": "P4_F",
+  "pair_id": "P4",
+  "category": "leakage",
+  "is_defect": true,
+  "violated_rule": "Features at prediction month t must use only records with month <= t; the 12-month window has no upper bound and includes months after t.",
+  "evidence": "Synthetic panel at t = 12: F03 (current through t, delinquent from t+1) gets max_dq_12m 8 instead of 0 and n_dq_months_12m 8 instead of 0; F09 (01 at exactly t+1) gets max_dq_12m 1 instead of 0. The future-invariance tests fail: features change when records after t are removed (truncation) or when statuses after t are changed (perturbation).",
+  "source": "Project outcome specification (CLAUDE.md); src/baseline_logreg.py build_snapshot; Freddie Mac SFLLD General User Guide, Release 47 (July 2026)"
+}

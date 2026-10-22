@@ -1,0 +1,9 @@
+{
+  "case_id": "P4_V",
+  "pair_id": "P4",
+  "category": "leakage",
+  "is_defect": false,
+  "violated_rule": null,
+  "evidence": "Synthetic panel at t = 12: all four features match the expected values for every loan (including month t itself for F05, the excluded month t-12 for F04 and a short history for F10), and the output is invariant to records after t under both truncation and perturbation.",
+  "source": "Project outcome specification (CLAUDE.md); src/baseline_logreg.py build_snapshot; Freddie Mac SFLLD General User Guide, Release 47 (July 2026)"
+}

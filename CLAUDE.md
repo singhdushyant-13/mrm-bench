@@ -53,8 +53,12 @@ Folder: `benchmark/`. One subfolder per pair. The detailed brief for each pair i
 3. Horizon (BUILT, verified): `pair3_horizon/`. The impl.py files are BYTE-IDENTICAL (HORIZON_MONTHS = 6); the SPECS
    differ (faulty spec = 12-month task, valid spec = 6-month early-warning task; also `spec.json`). The code
    alone cannot decide this pair; it tests spec applicability.
-4. Leakage (TODO): faulty feature uses records after t (e.g., max status over t+1..t+12 or the final
-   zero-balance code); valid uses max status over t-11..t.
+4. Leakage (BUILT, verified): `pair4_leakage/`. Faulty 12-month window has no upper bound (sees months > t);
+   valid uses months t-11..t (month t is allowed: false-positive trap). Future-invariance tests (truncate or
+   perturb months > t) are the general leakage check.
+KNOWN ISSUE: the leakage assertion in src/baseline_logreg.py (max_feature_period <= t) is tautological. It is
+computed from hist, which is already filtered to months <= t, so it can never fail. The baseline results are still
+correct (h12 is built from hist), but a real future-invariance test of build_snapshot() should be added.
 
 Actual structure (follow it for new pairs). Each pair folder has `README.md` plus `faulty/` and `valid/`,
 each containing:
