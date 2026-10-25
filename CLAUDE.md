@@ -26,19 +26,18 @@ independently defensible answer key. An AI validator (VALID-Agent) comes later â
   the file on disk: the notebook shows real loan rows, so Clear All Outputs before sharing the .ipynb file itself.
 
 ## Folder layout
-- `notebooks/01_baseline_logreg_walkthrough.ipynb`: the baseline (the only implementation).
+- `notebooks/baseline_logistic_regression.ipynb`: the baseline (the only implementation).
 - `reference/`: official baseline results (aggregates only, committed; see `reference/README.md`).
 - `benchmark/`: the defect/valid pairs and their runners (frozen answer keys).
 - `tests/test_baseline_no_leakage.py`: leakage test for the notebook's `build_snapshot()`.
-- `docs/briefs/`: the task briefs (`claude_code_task_*.md`), the record of how each part was built.
 - `data/raw/` (Freddie Mac files), `sflld_extracted/` (unzipped data), `outputs/` (optional notebook output): gitignored.
 
 ## Done so far (verified)
 - Data checked: 50,000 loans (31 origination fields), 3,467,166 monthly records (35 fields),
   periods 2015-01..2026-03, IDs match, no duplicate loan-months.
-- Clean baseline: `notebooks/01_baseline_logreg_walkthrough.ipynb` is the ONLY implementation of the baseline,
+- Clean baseline: `notebooks/baseline_logistic_regression.ipynb` is the ONLY implementation of the baseline,
   explained step by step. Run it in VS Code with the `.venv` kernel: Run All, about 1 minute. Headless:
-  `uv run jupyter nbconvert --to notebook --execute notebooks/01_baseline_logreg_walkthrough.ipynb --output-dir <a folder outside the repo>`.
+  `uv run jupyter nbconvert --to notebook --execute notebooks/baseline_logistic_regression.ipynb --output-dir <a folder outside the repo>`.
   Section 12 must print `MATCHES THE REFERENCE MODEL` (every result compared with `reference/`, tolerance 1e-9).
   Expected: train 101,843 rows / 462 events; test 15,716 rows / 119 events; test ROC-AUC 0.894.
   Do not change the model casually: an official change is a separate, reviewed step (notebook section 13 reminder).
@@ -63,8 +62,8 @@ independently defensible answer key. An AI validator (VALID-Agent) comes later â
   DTI 999 = all HARP loans (4,017 of 4,020).
 
 ## Benchmark status and plan
-Folder: `benchmark/`. One subfolder per pair. The detailed brief for each pair is in
-`docs/briefs/claude_code_task_pair<N>.md` and takes precedence over this summary.
+Folder: `benchmark/`. One subfolder per pair. Each pair's README.md and spec.md are the detailed record
+(the original task briefs were removed from the tree; they are in git history before this commit).
 The benchmark's references to `src/baseline_logreg.py` (specs, labels) mean the original script at commit 9253e97
 (pair 4's spec cites the earlier 9c743e2, which differs only by the removed tautological assertion); they are
 historical provenance, so do not edit them.

@@ -4,10 +4,10 @@ A benchmark of credit-risk model code for testing AI model validators: a clean l
 deliberately faulty and similar-looking valid variants, each with an independently defensible answer key
 (specification, math and an executable test). Master's research project at the University of North Texas.
 
-**Layout.** `notebooks/01_baseline_logreg_walkthrough.ipynb` is the baseline (12-month 90+ DPD logistic regression,
+**Layout.** `notebooks/baseline_logistic_regression.ipynb` is the baseline (12-month 90+ DPD logistic regression,
 explained step by step). `reference/` holds its official results (aggregates only). `benchmark/pairN_*/` holds the
 faulty/valid pairs, and `benchmark/run_pairN.py` scores them. `tests/` holds the leakage test for the notebook's
-`build_snapshot()`. `docs/briefs/` keeps the task briefs. `CLAUDE.md` has the project rules and specification.
+`build_snapshot()`. `CLAUDE.md` has the project rules and specification.
 
 **Setup.** `uv sync`, then `uv run nbstripout --install` once per clone (strips notebook outputs on commit).
 

@@ -18,7 +18,7 @@ Headline numbers: train 101,843 rows / 462 events; test 15,716 rows / 119 events
 pandas 3.1.0 and scikit-learn 1.9.1 (also recorded in `metrics.json`). The results were reproduced on two machines.
 They are byte-identical copies of the files the script wrote to `outputs/`.
 
-**How they are used.** The baseline is now `notebooks/01_baseline_logreg_walkthrough.ipynb`. Its section 12 compares
+**How they are used.** The baseline is now `notebooks/baseline_logistic_regression.ipynb`. Its section 12 compares
 every number above with these files and prints `MATCHES THE REFERENCE MODEL` when all of them agree (tolerance
 1e-9).
 

@@ -1,7 +1,7 @@
 """
 Future-invariance (no-leakage) tests for build_snapshot() in the baseline notebook
 ==================================================================================
-The function under test now lives in the notebook notebooks/01_baseline_logreg_walkthrough.ipynb, the only
+The function under test now lives in the notebook notebooks/baseline_logistic_regression.ipynb, the only
 implementation of the baseline (the original script, src/baseline_logreg.py, is in git history at commit 9253e97).
 The code cells tagged "leakage-test-source" (the cells that define ym_index() and build_snapshot()) are read with
 nbformat and executed in a fresh namespace that holds only numpy, pandas and HORIZON = 12.
@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-NOTEBOOK = Path(__file__).resolve().parents[1] / "notebooks" / "01_baseline_logreg_walkthrough.ipynb"
+NOTEBOOK = Path(__file__).resolve().parents[1] / "notebooks" / "baseline_logistic_regression.ipynb"
 TAG = "leakage-test-source"                      # cell tag on the notebook cells that define ym_index, build_snapshot
 HORIZON = 12                                     # outcome window of the specification (in the notebook: SETTINGS cell)
 
