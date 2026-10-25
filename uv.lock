@@ -323,7 +323,7 @@ wheels = [
 [[package]]
 name = "finance-ai-system"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "matplotlib" },
     { name = "numpy" },
@@ -335,6 +335,7 @@ dependencies = [
 dev = [
     { name = "ipykernel" },
     { name = "nbconvert" },
+    { name = "nbformat" },
     { name = "nbstripout" },
     { name = "pytest" },
 ]
@@ -351,6 +352,7 @@ requires-dist = [
 dev = [
     { name = "ipykernel", specifier = ">=7.4.0" },
     { name = "nbconvert", specifier = ">=7.17.2" },
+    { name = "nbformat", specifier = ">=5.11.1" },
     { name = "nbstripout", specifier = ">=0.9.1" },
     { name = "pytest", specifier = ">=9.1.1" },
 ]

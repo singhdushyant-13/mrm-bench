@@ -14,17 +14,14 @@ dependencies = [
     "scikit-learn>=1.9.1",
 ]
 
-[project.scripts]
-finance-ai-system = "finance_ai_system:main"
-
-[build-system]
-requires = ["uv_build>=0.13.5,<0.14.0"]
-build-backend = "uv_build"
+[tool.uv]
+package = false
 
 [dependency-groups]
 dev = [
     "ipykernel>=7.4.0",
     "nbconvert>=7.17.2",
+    "nbformat>=5.11.1",
     "nbstripout>=0.9.1",
     "pytest>=9.1.1",
 ]

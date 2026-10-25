@@ -21,13 +21,32 @@ independently defensible answer key. An AI validator (VALID-Agent) comes later â
   plus file_layout_july_2026.xlsx and general_user_guide_july_2026.pdf in data/raw/.
 - NEVER commit or copy Freddie Mac loan-level records into the repo, benchmark, tests, or docs.
   data/, sflld_extracted/, outputs/ are gitignored. Benchmark tests must use small SYNTHETIC data.
+- The project is not a package (`[tool.uv] package = false`); `uv sync` installs only the dependencies.
+- nbstripout strips notebook outputs on commit; run `uv run nbstripout --install` once per clone. It does not clean
+  the file on disk: the notebook shows real loan rows, so Clear All Outputs before sharing the .ipynb file itself.
+
+## Folder layout
+- `notebooks/01_baseline_logreg_walkthrough.ipynb`: the baseline (the only implementation).
+- `reference/`: official baseline results (aggregates only, committed; see `reference/README.md`).
+- `benchmark/`: the defect/valid pairs and their runners (frozen answer keys).
+- `tests/test_baseline_no_leakage.py`: leakage test for the notebook's `build_snapshot()`.
+- `docs/briefs/`: the task briefs (`claude_code_task_*.md`), the record of how each part was built.
+- `data/raw/` (Freddie Mac files), `sflld_extracted/` (unzipped data), `outputs/` (optional notebook output): gitignored.
 
 ## Done so far (verified)
 - Data checked: 50,000 loans (31 origination fields), 3,467,166 monthly records (35 fields),
   periods 2015-01..2026-03, IDs match, no duplicate loan-months.
-- Clean baseline: `src/baseline_logreg.py` (latest baseline commit 9253e97: leakage check fixed, results unchanged). Do not modify it casually â€” it is the
-  reference. Run: `uv run python src/baseline_logreg.py --data data/raw/sample_2015.zip` (~3 min).
+- Clean baseline: `notebooks/01_baseline_logreg_walkthrough.ipynb` is the ONLY implementation of the baseline,
+  explained step by step. Run it in VS Code with the `.venv` kernel: Run All, about 1 minute. Headless:
+  `uv run jupyter nbconvert --to notebook --execute notebooks/01_baseline_logreg_walkthrough.ipynb --output-dir <a folder outside the repo>`.
+  Section 12 must print `MATCHES THE REFERENCE MODEL` (every result compared with `reference/`, tolerance 1e-9).
   Expected: train 101,843 rows / 462 events; test 15,716 rows / 119 events; test ROC-AUC 0.894.
+  Do not change the model casually: an official change is a separate, reviewed step (notebook section 13 reminder).
+- Official results: `reference/` (metrics.json, label_counts.csv, coefficients.csv, calibration.csv). They were
+  produced by the original script `src/baseline_logreg.py` at commit 9253e97, now deleted from the working tree and
+  recoverable with `git show 9253e97:src/baseline_logreg.py`. Never edit `reference/` by hand.
+- `SAVE_OUTPUTS = True` in the notebook's SETTINGS cell writes the script's five result files to `outputs/`
+  (default False); with default settings the four CSV/JSON files are byte-identical to `reference/`.
 
 ## Outcome specification (draft, pending professor approval)
 - Prediction date t: end of each December 2015..2024 (loan-snapshot design).
@@ -45,7 +64,10 @@ independently defensible answer key. An AI validator (VALID-Agent) comes later â
 
 ## Benchmark status and plan
 Folder: `benchmark/`. One subfolder per pair. The detailed brief for each pair is in
-`docs/claude_code_task_pair<N>.md` and takes precedence over this summary.
+`docs/briefs/claude_code_task_pair<N>.md` and takes precedence over this summary.
+The benchmark's references to `src/baseline_logreg.py` (specs, labels) mean the original script at commit 9253e97
+(pair 4's spec cites the earlier 9c743e2, which differs only by the removed tautological assertion); they are
+historical provenance, so do not edit them.
 1. Preprocessing (DONE, commit 7fa098c): `pair1_preprocessing/`. Faulty uses DTI 999 as a number; valid
    converts 999 to NaN, adds a missing flag, and imputes with the training median.
 2. Formula (BUILT, verified): `pair2_formula/`. Faulty p = 1/(1+exp(+z)); valid p = 0.5*(1+tanh(z/2)).
@@ -56,11 +78,13 @@ Folder: `benchmark/`. One subfolder per pair. The detailed brief for each pair i
 4. Leakage (BUILT, verified): `pair4_leakage/`. Faulty 12-month window has no upper bound (sees months > t);
    valid uses months t-11..t (month t is allowed: false-positive trap). Future-invariance tests (truncate or
    perturb months > t) are the general leakage check.
-FIXED (baseline leakage check): the tautological assertion `max_feature_period <= t` (computed from hist, which is
-already filtered to months <= t, so it could never fail) was removed from build_snapshot(). The leakage check now lives
-in `tests/test_baseline_no_leakage.py`: future invariance (truncate or perturb all records after t) plus a mutation
-power check (a copy of build_snapshot() with a leaky 12-month window must be detected). Run: `uv run pytest tests`.
-Baseline results unchanged: console output and all files in outputs/ byte-identical to the committed run.
+FIXED (baseline leakage check, commit 9253e97): the tautological assertion `max_feature_period <= t` (computed from
+hist, which is already filtered to months <= t, so it could never fail) was removed from build_snapshot(). The leakage
+check lives in `tests/test_baseline_no_leakage.py`. It loads `ym_index()` and `build_snapshot()` from the notebook's
+code cells tagged `leakage-test-source` (read with nbformat, executed in a fresh namespace holding only np, pd and
+HORIZON = 12), then runs future invariance (truncate or perturb all records after t) plus a mutation power check (the
+`h12 = hist[...]` line rewritten to read `perf`; must be detected). Keep those two cells tagged and self-contained.
+Run: `uv run pytest tests -v` (4 tests).
 
 Actual structure (follow it for new pairs). Each pair folder has `README.md` plus `faulty/` and `valid/`,
 each containing:
@@ -80,4 +104,5 @@ from 00 to 03 in one month; loans can prepay while 90+; zero-balance date can be
 - Separate clearly: completed, proposed, unverified.
 - Never invent data, results, or citations. Do not report metrics you did not actually run.
 - Do not treat poor accuracy, odd coefficients, or distribution shift as implementation defects.
-- Small steps; run tests (`uv run pytest`) before saying something works; suggest a git commit after each step.
+- Small steps; run tests (`uv run pytest tests -v`, plus the benchmark runners) before saying something works;
+  suggest a git commit after each step.

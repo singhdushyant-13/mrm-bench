@@ -1,0 +1,107 @@
+{
+  "train": {
+    "n": 101843,
+    "events": 462,
+    "event_rate": 0.0045363942539006115,
+    "mean_predicted": 0.004555819023825699,
+    "roc_auc": 0.890198757752836,
+    "pr_auc": 0.25555839772166916,
+    "brier": 0.0038347129612107305,
+    "brier_reference_base_rate": 0.004515815381073788,
+    "roc_auc_95ci": [
+      0.8717213859236141,
+      0.9084303729356424
+    ],
+    "pr_auc_95ci": [
+      0.207537261737781,
+      0.3054453453297737
+    ]
+  },
+  "test_2021_2024": {
+    "n": 15716,
+    "events": 119,
+    "event_rate": 0.007571901247136676,
+    "mean_predicted": 0.004349054264044474,
+    "roc_auc": 0.8942502948476947,
+    "pr_auc": 0.307274671472614,
+    "brier": 0.00619557765925945,
+    "brier_reference_base_rate": 0.007514567558640285,
+    "roc_auc_95ci": [
+      0.8491027560265211,
+      0.9296632136653596
+    ],
+    "pr_auc_95ci": [
+      0.22056465273100606,
+      0.40649669796187843
+    ]
+  },
+  "stress_2019_2020": {
+    "n": 12445,
+    "events": 422,
+    "event_rate": 0.033909200482121336,
+    "mean_predicted": 0.006078923840465599,
+    "roc_auc": 0.7324318752407017,
+    "pr_auc": 0.1539606849624708,
+    "brier": 0.03205086301886361,
+    "brier_reference_base_rate": 0.032759366604784644,
+    "roc_auc_95ci": [
+      0.7059298548979621,
+      0.7572950184273399
+    ],
+    "pr_auc_95ci": [
+      0.1219201021752445,
+      0.19121833196332252
+    ]
+  },
+  "config": {
+    "seed": 20261022,
+    "train_snapshots": [
+      201512,
+      201612,
+      201712,
+      201812
+    ],
+    "test_snapshots": [
+      202112,
+      202212,
+      202312,
+      202412
+    ],
+    "horizon_months": 12,
+    "train_loan_share_pct": 70,
+    "C": 1.0,
+    "features_numeric": [
+      "fico",
+      "orig_ltv",
+      "orig_dti",
+      "dti_missing",
+      "orig_interest_rate",
+      "log_orig_upb",
+      "term_360",
+      "multi_borrower",
+      "mi_flag",
+      "num_units",
+      "loan_age",
+      "max_dq_12m",
+      "n_dq_months_12m",
+      "ever_90_before_t",
+      "ever_modified",
+      "disaster_flag_t"
+    ],
+    "features_categorical": [
+      "status_t",
+      "loan_purpose",
+      "occupancy_status",
+      "first_time_homebuyer",
+      "property_type",
+      "channel",
+      "assist_plan_t"
+    ]
+  },
+  "versions": {
+    "python": "3.12.12",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "scikit-learn": "1.9.1"
+  }
+}
