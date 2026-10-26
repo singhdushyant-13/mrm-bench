@@ -28,8 +28,11 @@ independently defensible answer key. An AI validator (VALID-Agent) comes later â
 ## Folder layout
 - `notebooks/baseline_logistic_regression.ipynb`: the baseline (the only implementation).
 - `reference/`: official baseline results (aggregates only, committed; see `reference/README.md`).
+  `reference/archive/v1_lbfgs_tol_1e-4/` keeps the superseded first results (never edit either).
 - `benchmark/`: the defect/valid pairs and their runners (frozen answer keys).
 - `tests/test_baseline_no_leakage.py`: leakage test for the notebook's `build_snapshot()`.
+- `reports/solver_tolerance/`: the reproducible solver-tolerance study behind the v2 reference (script + report).
+- `docs/`: the two-page pilot plan for Dr. Ku (.docx and .pdf).
 - `data/raw/` (Freddie Mac files), `sflld_extracted/` (unzipped data), `outputs/` (optional notebook output): gitignored.
 
 ## Done so far (verified)
@@ -39,11 +42,22 @@ independently defensible answer key. An AI validator (VALID-Agent) comes later â
   explained step by step. Run it in VS Code with the `.venv` kernel: Run All, about 1 minute. Headless:
   `uv run jupyter nbconvert --to notebook --execute notebooks/baseline_logistic_regression.ipynb --output-dir <a folder outside the repo>`.
   Section 12 must print `MATCHES THE REFERENCE MODEL` (every result compared with `reference/`, tolerance 1e-9).
-  Expected: train 101,843 rows / 462 events; test 15,716 rows / 119 events; test ROC-AUC 0.894.
+  Expected: train 101,843 rows / 462 events; test 15,716 rows / 119 events; lbfgs 810 iterations;
+  test ROC-AUC 0.893 [0.848, 0.928], PR-AUC 0.301, Brier 0.00622.
   Do not change the model casually: an official change is a separate, reviewed step (notebook section 13 reminder).
-- Official results: `reference/` (metrics.json, label_counts.csv, coefficients.csv, calibration.csv). They were
-  produced by the original script `src/baseline_logreg.py` at commit 9253e97, now deleted from the working tree and
-  recoverable with `git show 9253e97:src/baseline_logreg.py`. Never edit `reference/` by hand.
+- Official results (v2, since 2026-10-25): `reference/` (metrics.json, label_counts.csv, coefficients.csv,
+  calibration.csv), produced by the notebook with `TOL = 1e-8` and `SAVE_OUTPUTS = True` (a second run was
+  byte-identical). Never edit `reference/` by hand.
+- Solver tolerance (the only change from v1): v1 used scikit-learn's default lbfgs `tol = 1e-4`, which stopped after
+  40 iterations with no warning but before the optimum (penalized objective 2030.98 vs 2023.11). v1 was made by the
+  original script `src/baseline_logreg.py` at commit 9253e97 (recoverable with `git show 9253e97:src/baseline_logreg.py`;
+  test ROC-AUC 0.894, PR-AUC 0.307) and is archived in `reference/archive/v1_lbfgs_tol_1e-4/`. `TOL = 1e-8` matches
+  scikit-learn's newton-cholesky solver (objective within 3e-7, probabilities within 1e-4). The correction does not
+  materially change overall discrimination or calibration, but rare category levels are sensitive: predictions moved
+  by up to 0.12 (test) / 0.24 (stress), and rare-level one-hot coefficients (0â€“2 training events) are penalty-driven,
+  so do not interpret them. Only differences between levels of one feature mean anything (levels sum to 0 at the
+  optimum). Study and checks: `uv run python reports/solver_tolerance/run_sensitivity.py` (reproduces v2 and v1
+  within 1e-9).
 - `SAVE_OUTPUTS = True` in the notebook's SETTINGS cell writes the script's five result files to `outputs/`
   (default False); with default settings the four CSV/JSON files are byte-identical to `reference/`.
 
@@ -53,7 +67,11 @@ independently defensible answer key. An AI validator (VALID-Agent) comes later â
 - Features: origination fields + performance records with period <= t ONLY.
 - Event (y=1): any month t+1..t+12 with numeric status >= 03 or status 'RA'.
   This is "12-month 90+ DPD serious delinquency", NOT a regulatory default definition.
-- Non-event (y=0): no event and loan still observed at t+12.
+- Non-event (y=0): no event and loan still observed at t+12 (implemented as: a record at t+12 or later).
+  Known limitation, kept until Dr. Ku decides (do not change it without approval): the rule does not require every
+  window month to be observed. Exactly 1 of 237,720 non-event rows has a gap (Dec 2015 snapshot, training: its t+12
+  record is missing, status 00 before and after). Requiring all 12 months would censor it (train 101,842 rows,
+  events unchanged; test/stress unchanged). Pair 3's spec (rule O5) uses the same rule in both cases.
 - Censored (excluded, counted): prepay (zero-balance code 01), other termination (02/03/09/15/16/96)
   before t+12 without a 90+ month, or window past 2026-03.
 - Split: train Dec 2015â€“2018, test Dec 2021â€“2024, 2019â€“2020 = stress test only (COVID forbearance).
